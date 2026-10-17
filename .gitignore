@@ -1,0 +1,39 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+!mvnw
+!mvnw.cmd
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Spring / local configuration
+application-local.yml
+application-local.yaml
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test and temporary files
+surefire-reports/
+failsafe-reports/
+*.tmp
+*.bak
+
+# Docker local data
+docker/data/
