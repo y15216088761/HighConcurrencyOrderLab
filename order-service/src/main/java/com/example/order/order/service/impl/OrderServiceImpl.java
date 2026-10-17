@@ -2,6 +2,9 @@ package com.example.order.order.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.order.order.dto.OrderCreateRequest;
+import com.example.order.order.dto.OrderDetailResponse;
+import com.example.order.order.dto.OrderItemResponse;
+import com.example.order.order.dto.OrderResponse;
 import com.example.order.order.entity.Order;
 import com.example.order.order.entity.OrderItem;
 import com.example.order.order.mapper.OrderItemMapper;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -75,5 +79,36 @@ public class OrderServiceImpl implements OrderService {
         orderItemMapper.insert(item);
 
         return order;
+    }
+
+    @Override
+    public OrderDetailResponse getDetail(String orderNo) {
+        Order order = orderMapper.selectOne(
+                new LambdaQueryWrapper<Order>()
+                        .eq(Order::getOrderNo, orderNo)
+        );
+        if (order == null) {
+            return null;
+        }
+
+        List<OrderItemResponse> items = orderItemMapper.selectList(
+                        new LambdaQueryWrapper<OrderItem>()
+                                .eq(OrderItem::getOrderId, order.getId())
+                ).stream()
+                .map(OrderItemResponse::from)
+                .toList();
+
+        return OrderDetailResponse.from(order, items);
+    }
+
+    @Override
+    public List<OrderResponse> listByUserId(Long userId) {
+        return orderMapper.selectList(
+                        new LambdaQueryWrapper<Order>()
+                                .eq(Order::getUserId, userId)
+                                .orderByDesc(Order::getCreatedAt)
+                ).stream()
+                .map(OrderResponse::from)
+                .toList();
     }
 }
