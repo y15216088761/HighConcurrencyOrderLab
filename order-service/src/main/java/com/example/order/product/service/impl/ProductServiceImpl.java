@@ -1,6 +1,7 @@
 package com.example.order.product.service.impl;
 
 import com.example.order.product.dto.ProductCreateRequest;
+import com.example.order.product.dto.ProductUpdateRequest;
 import com.example.order.product.entity.Product;
 import com.example.order.product.mapper.ProductMapper;
 import com.example.order.product.service.ProductService;
@@ -37,5 +38,33 @@ public class ProductServiceImpl implements ProductService {
         product.setVersion(0L);
         productMapper.insert(product);
         return product;
+    }
+
+    @Override
+    public Product update(Long id, ProductUpdateRequest request) {
+        Product product = productMapper.selectById(id);
+        if (product == null) {
+            return null;
+        }
+        product.setName(request.name());
+        product.setPrice(request.price());
+        product.setStock(request.stock());
+        productMapper.updateById(product);
+        return productMapper.selectById(id);
+    }
+
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        Product product = productMapper.selectById(id);
+        if (product == null) {
+            return;
+        }
+        product.setStatus(status);
+        productMapper.updateById(product);
+    }
+
+    @Override
+    public void delete(Long id) {
+        productMapper.deleteById(id);
     }
 }
