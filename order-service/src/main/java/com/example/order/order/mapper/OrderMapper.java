@@ -12,4 +12,8 @@ public interface OrderMapper extends BaseMapper<Order> {
     @Update("UPDATE orders SET status = 'PAID', updated_at = CURRENT_TIMESTAMP " +
             "WHERE id = #{orderId} AND status = 'PENDING_PAYMENT'")
     int markPaid(@Param("orderId") Long orderId);
+
+    @Update("UPDATE orders SET status = 'CANCELLED', updated_at = CURRENT_TIMESTAMP " +
+            "WHERE id = #{orderId} AND status = 'PENDING_PAYMENT'")
+    int markCancelled(@Param("orderId") Long orderId);
 }

@@ -102,6 +102,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
+    public void cancel(String orderNo) {
+        Order order = orderMapper.selectOne(
+                new LambdaQueryWrapper<Order>()
+                        .eq(Order::getOrderNo, orderNo)
+        );
+        if (order == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+
+        int affectedRows = orderMapper.markCancelled(order.getId());
+        if (affectedRows != 1) {
+            throw new IllegalArgumentException("订单当前状态不可取消");
+        }
+
+        List<OrderItem> items = orderItemMapper.selectList(
+                new LambdaQueryWrapper<OrderItem>()
+                        .eq(OrderItem::getOrderId, order.getId())
+        );
+        for (OrderItem item : items) {
+            productMapper.increaseStock(item.getProductId(), item.getQuantity());
+        }
+    }
+
+    @Override
     public List<OrderResponse> listByUserId(Long userId) {
         return orderMapper.selectList(
                         new LambdaQueryWrapper<Order>()

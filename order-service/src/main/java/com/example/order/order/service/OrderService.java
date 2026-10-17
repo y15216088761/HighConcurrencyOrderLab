@@ -14,4 +14,6 @@ public interface OrderService {
     OrderDetailResponse getDetail(String orderNo);
 
     List<OrderResponse> listByUserId(Long userId);
+
+    void cancel(String orderNo);
 }

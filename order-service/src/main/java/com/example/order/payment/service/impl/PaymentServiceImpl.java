@@ -48,4 +48,19 @@ public class PaymentServiceImpl implements PaymentService {
         paymentMapper.insert(payment);
         return payment;
     }
+
+    @Override
+    public Payment getByOrderNo(String orderNo) {
+        Order order = orderMapper.selectOne(
+                new LambdaQueryWrapper<Order>()
+                        .eq(Order::getOrderNo, orderNo)
+        );
+        if (order == null) {
+            return null;
+        }
+        return paymentMapper.selectOne(
+                new LambdaQueryWrapper<Payment>()
+                        .eq(Payment::getOrderId, order.getId())
+        );
+    }
 }

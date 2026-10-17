@@ -2,11 +2,14 @@ package com.example.order.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.order.user.dto.UserRegisterRequest;
+import com.example.order.user.dto.UserUpdateRequest;
 import com.example.order.user.entity.UserAccount;
 import com.example.order.user.mapper.UserAccountMapper;
 import com.example.order.user.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,5 +39,44 @@ public class UserServiceImpl implements UserService {
         user.setStatus(1);
         userAccountMapper.insert(user);
         return user;
+    }
+
+    @Override
+    public UserAccount getById(Long id) {
+        return userAccountMapper.selectById(id);
+    }
+
+    @Override
+    public List<UserAccount> listAll() {
+        return userAccountMapper.selectList(null);
+    }
+
+    @Override
+    public UserAccount update(Long id, UserUpdateRequest request) {
+        UserAccount user = userAccountMapper.selectById(id);
+        if (user == null) {
+            return null;
+        }
+        user.setUsername(request.username());
+        if (request.password() != null && !request.password().isBlank()) {
+            user.setPasswordHash(passwordEncoder.encode(request.password()));
+        }
+        userAccountMapper.updateById(user);
+        return userAccountMapper.selectById(id);
+    }
+
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        UserAccount user = userAccountMapper.selectById(id);
+        if (user == null) {
+            return;
+        }
+        user.setStatus(status);
+        userAccountMapper.updateById(user);
+    }
+
+    @Override
+    public void delete(Long id) {
+        userAccountMapper.deleteById(id);
     }
 }
