@@ -1,2 +1,9 @@
-package com.example.order.product.mapper;public class ProductMapper {
+package com.example.order.product.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.order.product.entity.Product;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface ProductMapper extends BaseMapper<Product> {
 }
